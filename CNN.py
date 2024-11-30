@@ -6,31 +6,62 @@ import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.optim.lr_scheduler import StepLR
 
-
-class Net(nn.Module):
+# Task 1: Implement a Convolutional Neural Network (CNN) for the MNIST dataset.
+class NeuralNet(nn.Module):
     def __init__(self):
-        super(Net, self).__init__()
+        super(NeuralNet, self).__init__()
+        
+        # Convolutional Layer 1 and Pooling Layer 1
+        # What they do is they take the input image and apply a series of learnable filters to the image.
+        # conv2d takes 4 arguments: the number of input channels, the number of output channels, the size of the kernel, and the stride of the kernel.
         self.conv1 = nn.Conv2d(1, 32, 3, 1)
+        self.pool1 = nn.MaxPool2d(2, 2)
+    
+
         self.conv2 = nn.Conv2d(32, 64, 3, 1)
-        self.dropout1 = nn.Dropout(0.25)
-        self.dropout2 = nn.Dropout(0.5)
-        self.fc1 = nn.Linear(9216, 128)
-        self.fc2 = nn.Linear(128, 10)
+        self.pool2 = nn.MaxPool2d(2, 2)
+
+        self.conv3 = nn.Conv2d(64, 128, 3, 1)
+        self.pool3 = nn.MaxPool2d(2, 2)
+
+        self.conv4 = nn.Conv2d(128, 256, 3, 1)
+        self.pool4 = nn.MaxPool2d(2, 2)
+
+        self.fc1 = nn.Linear(256 * 1 * 1, 10)
 
     def forward(self, x):
-        x = self.conv1(x)
-        x = F.relu(x)
-        x = self.conv2(x)
-        x = F.relu(x)
-        x = F.max_pool2d(x, 2)
-        x = self.dropout1(x)
-        x = torch.flatten(x, 1)
+        # Variable x is the input image.
+        # F.relu is the activation function ReLU.
+        x = F.relu(self.conv1(x))
+        x = self.pool1(x)
+        
+        x = F.relu(self.conv2(x))
+        x = self.pool2(x)
+        
+        x = F.relu(self.conv3(x))
+        x = self.pool3(x)
+        
+        x = F.relu(self.conv4(x))
+        x = self.pool4(x)
+        
+        x = x.view(-1, 256 * 1 * 1)
         x = self.fc1(x)
-        x = F.relu(x)
-        x = self.dropout2(x)
-        x = self.fc2(x)
-        output = F.log_softmax(x, dim=1)
-        return output
+        return F.log_softmax(x, dim=1)
+
+
+class FeedforwardNet(nn.Module):
+    def __init__(self):
+        super(FeedforwardNet, self).__init__()
+        self.fc1 = nn.Linear(28*28, 512)
+        self.fc2 = nn.Linear(512, 256)
+        self.fc3 = nn.Linear(256, 10)
+
+    def forward(self, x):
+        x = x.view(-1, 28*28) 
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = self.fc3(x)
+        return F.log_softmax(x, dim=1)
 
 
 def train(args, model, device, train_loader, optimizer, epoch):
@@ -58,8 +89,8 @@ def test(model, device, test_loader):
         for data, target in test_loader:
             data, target = data.to(device), target.to(device)
             output = model(data)
-            test_loss += F.nll_loss(output, target, reduction='sum').item()  # sum up batch loss
-            pred = output.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
+            test_loss += F.nll_loss(output, target, reduction='sum').item() 
+            pred = output.argmax(dim=1, keepdim=True) 
             correct += pred.eq(target.view_as(pred)).sum().item()
 
     test_loss /= len(test_loader.dataset)
@@ -82,8 +113,6 @@ def main():
                         help='learning rate (default: 1.0)')
     parser.add_argument('--gamma', type=float, default=0.7, metavar='M',
                         help='Learning rate step gamma (default: 0.7)')
-    parser.add_argument('--no-cuda', action='store_true', default=False,
-                        help='disables CUDA training')
     parser.add_argument('--no-mps', action='store_true', default=False,
                         help='disables macOS GPU training')
     parser.add_argument('--dry-run', action='store_true', default=False,
@@ -92,8 +121,9 @@ def main():
                         help='random seed (default: 1)')
     parser.add_argument('--log-interval', type=int, default=10, metavar='N',
                         help='how many batches to wait before logging training status')
-    parser.add_argument('--save-model', action='store_true', default=False,
+    parser.add_argument('--save-model', action='store_true', default=True,
                         help='For Saving the current Model')
+    
     args = parser.parse_args()
     use_cuda = not args.no_cuda and torch.cuda.is_available()
     use_mps = not args.no_mps and torch.backends.mps.is_available()
@@ -123,6 +153,8 @@ def main():
         transforms.ToTensor(),
         transforms.Normalize((0.1307,), (0.3081,))
         ])
+    
+
     dataset1 = datasets.MNIST('../data', train=True, download=True,
                        transform=transform)
     dataset2 = datasets.MNIST('../data', train=False,
@@ -130,7 +162,8 @@ def main():
     train_loader = torch.utils.data.DataLoader(dataset1,**train_kwargs)
     test_loader = torch.utils.data.DataLoader(dataset2, **test_kwargs)
 
-    model = Net().to(device)
+    model = NeuralNet().to(device)
+
     optimizer = optim.Adadelta(model.parameters(), lr=args.lr)
 
     scheduler = StepLR(optimizer, step_size=1, gamma=args.gamma)
@@ -139,8 +172,19 @@ def main():
         test(model, device, test_loader)
         scheduler.step()
 
-    if args.save_model:
-        torch.save(model.state_dict(), "mnist_cnn.pt")
+    # if args.save_model:
+    #     torch.save(model.state_dict(), "mnist_cnn.pt")
+
+    # Task 2: Implement a Feedforward Neural Network for the MNIST dataset.
+    print("Task 2: Feedforward Neural Network")
+    model2 = FeedforwardNet().to(device)
+    optimizer = optim.Adadelta(model2.parameters(), lr=args.lr)
+
+    scheduler = StepLR(optimizer, step_size=1, gamma=args.gamma)
+    for epoch in range(1, args.epochs + 1):
+        train(args, model, device, train_loader, optimizer, epoch)
+        test(model, device, test_loader)
+        scheduler.step()
 
 
 if __name__ == '__main__':
