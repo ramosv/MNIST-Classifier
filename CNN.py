@@ -1,4 +1,3 @@
-import argparse
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -41,9 +40,10 @@ class NeuralNet(nn.Module):
         
         x = torch.flatten(x, 1)
         x = self.fc1(x)
+
         return F.log_softmax(x, dim=1)
 
-def train(model, device, train_loader, optimizer, epoch):
+def train(model, device, train_loader, optimizer, epoch, output_lines):
     model.train()
     for batch_idx, (data, target) in enumerate(train_loader):
         data, target = data.to(device), target.to(device)
@@ -53,10 +53,11 @@ def train(model, device, train_loader, optimizer, epoch):
         loss.backward()
         optimizer.step()
         if batch_idx % 10 == 0:
-            print(f'Train Epoch: {epoch} [{batch_idx * len(data)}/{len(train_loader.dataset)} '
+            message =(f'Train Epoch: {epoch} [{batch_idx * len(data)}/{len(train_loader.dataset)} '
                   f'({100. * batch_idx / len(train_loader):.0f}%)]\tLoss: {loss.item():.6f}')
-
-def test(model, device, test_loader):
+            print(message)
+            output_lines.append(message)
+def test(model, device, test_loader, output_lines):
     model.eval()
     test_loss = 0
     correct = 0
@@ -70,24 +71,19 @@ def test(model, device, test_loader):
 
     test_loss /= len(test_loader.dataset)
 
-    print(f'\nTest set: Average loss: {test_loss:.4f}, '
+    message = (f'\nTest set: Average loss: {test_loss:.4f}, '
           f'Accuracy: {correct}/{len(test_loader.dataset)} '
           f'({100. * correct / len(test_loader.dataset):.0f}%)\n')
     
-    #return 100. * correct / len(test_loader.dataset)
+    print(message)
+    output_lines.append(message)
 
-def Run_CNN():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--epochs', type=int, default=14)
-    parser.add_argument('--lr', type=float, default=1.0)
-    parser.add_argument('--percent', type=float, default=1.0)
-    
-    
-    args = parser.parse_args()
+def Run_CNN(epochs=14, lr=1.0, percent=1.0):    
+    output_lines = []
     # setting a manual seed for reproducibility
     torch.manual_seed(1)
 
-    #Testing on mac: well use mps other uncomment cuda or cpu
+    #Testing on mac: well use mps otherwise uncomment cuda or cpu
     device = torch.device('mps')
     #device = torch.device('cuda')
     #device = torch.device('cpu')
@@ -95,15 +91,6 @@ def Run_CNN():
     #Take the tain and test argscumetns
     train_kwargs = {'batch_size': 64}
     test_kwargs = {'batch_size': 1000}
-
-    # also if using cuda comment out this block
-
-    # if use_cuda:
-    #     cuda_kwargs = {'num_workers': 1,
-    #                    'pin_memory': True,
-    #                    'shuffle': True}
-    #     train_kwargs.update(cuda_kwargs)
-    #     test_kwargs.update(cuda_kwargs)
 
     # Transform from torch vision library uses Compose to chain multiple transforms together
     # ToTensor() converts the image to a tensor: a tensor is just a multi-dimensional array
@@ -124,31 +111,37 @@ def Run_CNN():
     # Adjust the training dataset based on percent argument
     # We can use the Subset class to create a subset of the dataset
     # We can then use the DataLoader class to load the subset
-    if args.percent < 1.0:
+    if percent < 1.0:
         # setting the number of training samples based on the percent argument
-        num_train = int(len(dataset1) * args.percent)
+        num_train = int(len(dataset1) * percent)
         indices = np.random.choice(len(dataset1), num_train, replace=False)
         subset = Subset(dataset1, indices)
         train_loader = torch.utils.data.DataLoader(subset, **train_kwargs)
-        print(f'Using {num_train} training samples out of {len(dataset1)}')
+        message = (f'Using {num_train} training samples out of {len(dataset1)}')
+        print(message)
+        output_lines.append(message)
     else:
         train_loader = torch.utils.data.DataLoader(dataset1, **train_kwargs)
-        print(f'Using all {len(dataset1)} training samples')
+        message= (f'Using all {len(dataset1)} training samples')
+        output_lines.append(message)
 
     # regardless of the size of the training dataset, we will use all the test samples
     test_loader = torch.utils.data.DataLoader(dataset2, **test_kwargs)
     
     # Create the model and optimizer
     model = NeuralNet().to(device)
-    optimizer = optim.Adadelta(model.parameters(), lr=args.lr)
+    optimizer = optim.Adadelta(model.parameters(), lr=lr)
 
     scheduler = StepLR(optimizer, step_size=1, gamma=0.7)
-    for epoch in range(1, args.epochs + 1):
+    for epoch in range(1, epochs + 1):
         # train and test functions do not return anything
         # we capture the result in our shell script by combinng grep and the print
-        train(model, device, train_loader, optimizer, epoch)
-        test(model, device, test_loader)
+        train(model, device, train_loader, optimizer, epoch,output_lines)
+        test(model, device, test_loader, output_lines)
         scheduler.step()
 
     torch.save(model.state_dict(), "mnist_cnn.pt")
-    print("Model saved as mnist_cnn.pt")
+    message = ("Model saved as mnist_cnn.pt")
+    output_lines.append(message)
+
+    return output_lines

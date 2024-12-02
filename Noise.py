@@ -1,13 +1,10 @@
-import argparse
 import torch
 import torch.nn.functional as F
 from torchvision import datasets, transforms
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-
-# Import the NeuralNet class from main.py
-from .CNN import NeuralNet
+from CNN import NeuralNet
 
 def add_gaussian_noise(image, mean=0.0, std=0.5):
     noisy_img = image + torch.randn(image.size()) * std + mean
@@ -30,37 +27,29 @@ def add_salt_pepper_noise(image, prob=0.2):
 
     return noisy_img
 
-def Add_Noise():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--noise-type', type=str, required=True)
-    parser.add_argument('--mean', type=float, default=0.0)
-    parser.add_argument('--std', type=float, default=0.5)
-    parser.add_argument('--prob', type=float, default=0.2)
-    args = parser.parse_args()
+def Add_Noise(noise_type, mean=0.0, std=0.5, prob=0.2):
+    output_lines = []
 
+    device = torch.device("mps")
+    #device = torch.device("cuda")
+    #device = torch.device("cpu")
 
-    #comment out this line if using cuda or cpu
-    #device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    
-    device = torch.device('mps')
-   
-    # Load the trained model
     model = NeuralNet().to(device)
     if not os.path.exists("mnist_cnn.pt"):
-        print("Trained model 'mnist_cnn.pt' not found. Please train the model first.")
-        return
-    
+        message = "Trained model 'mnist_cnn.pt' not found. Please train the model first."
+        print(message)
+        output_lines.append(message)
+        return output_lines
+
     model.load_state_dict(torch.load("mnist_cnn.pt", map_location=device))
     model.eval()
 
-    # Load the test dataset
-    transform=transforms.Compose([
+    transform = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize((0.1307,), (0.3081,))
-        ])
+    ])
     test_dataset = datasets.MNIST('../data', train=False, download=True, transform=transform)
 
-    # Identify two correctly classified test images
     correct_images = []
     correct_labels = []
     with torch.no_grad():
@@ -75,35 +64,34 @@ def Add_Noise():
                     break
 
     if len(correct_images) < 2:
-        print("Not enough correctly classified images found.")
-        return
+        message = "Not enough correctly classified images found."
+        print(message)
+        output_lines.append(message)
+        return output_lines
 
     results = ""
 
     for idx in range(2):
         image = correct_images[idx]
         label = correct_labels[idx]
-        if args.noise_type.lower() == "gaussian":
-            noisy_image = add_gaussian_noise(image, mean=args.mean, std=args.std)
-            noise_param = f"Gaussian Noise (mean={args.mean}, std={args.std})"
-        elif args.noise_type.lower() in ["s&p", "salt_pepper", "salt and pepper"]:
-            noisy_image = add_salt_pepper_noise(image, prob=args.prob)
-            noise_param = f"Salt and Pepper Noise (prob={args.prob})"
+        if noise_type.lower() == "gaussian":
+            noisy_image = add_gaussian_noise(image, mean=mean, std=std)
+            noise_param = f"Gaussian Noise (mean={mean}, std={std})"
+        elif noise_type.lower() in ["s&p", "salt_pepper", "salt and pepper"]:
+            noisy_image = add_salt_pepper_noise(image, prob=prob)
+            noise_param = f"Salt and Pepper Noise (prob={prob})"
         else:
-            print("Unsupported noise type. Use 'gaussian' or 's&p'.")
-            return
+            message = "Unsupported noise type. Use 'gaussian' or 's&p'."
+            print(message)
+            output_lines.append(message)
+            return output_lines
 
-        # Predict with noisy image
         output = model(noisy_image.unsqueeze(0).to(device))
         pred = output.argmax(dim=1, keepdim=True).item()
-
-        # Check if tricked
         fooled = pred != label
-        result = f"Image {idx+1} - Original Label: {label}, Predicted: {label}, After Noise: {pred} | Fooled: {fooled}"
+        result = (f"Image {idx+1} - Original Label: {label}, "
+                  f"Predicted After Noise: {pred} | Fooled: {fooled}")
         results += result + "\n"
-
-        # Save the noisy images
-        
 
         plt.imshow(noisy_image.squeeze(), cmap='gray')
         plt.title(f'Original: {label}, Predicted: {pred}')
@@ -111,3 +99,5 @@ def Add_Noise():
         plt.close()
 
     print(results)
+    output_lines.append(results)
+    return output_lines
