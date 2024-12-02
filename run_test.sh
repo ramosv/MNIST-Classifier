@@ -6,17 +6,17 @@
 echo "=== CNN MNIST Classification Results ===" > results.txt
 echo "" >> results.txt
 
-# Make an array of test configurations
+# Array of test configurations
 # Each configuration is an argument to pass to main.py
 declare -a tests=(
-    "--epochs 5 --lr 0.01"
-    "--epochs 5 --lr 0.001"
-    "--epochs 5 --lr 0.005"
-    "--epochs 5 --lr 0.0005"
-    "--epochs 5 --lr 0.002"
+    "--epochs 3 --lr 0.01"
+    "--epochs 3 --lr 0.001"
+    "--epochs 3 --lr 0.005"
+    "--epochs 3 --lr 0.0005"
+    "--epochs 3 --lr 0.002"
 )
 
-# Loop through each test configuration
+# Looping through each test configuration
 for i in "${!tests[@]}"; do
     test_num=$((i+1))
     config=${tests[$i]}
@@ -27,6 +27,7 @@ for i in "${!tests[@]}"; do
     
     # Run the Python script with configuration
     # Get the output
+    # Filter the output to only include the test set accuracy
     output=$(python main.py $config | grep "Test set:")
     
     # Add the output to results.txt
@@ -42,8 +43,8 @@ echo "=== Task 3: Training with Reduced Data Sizes ===" >> results.txt
 echo "" >> results.txt
 
 declare -a task3_tests=(
-    "--epochs 5 --lr 1.0 --data-fraction 0.5"
-    "--epochs 5 --lr 1.0 --data-fraction 0.05"
+    "--epochs 5 --lr 1.0 --percent 0.5"
+    "--epochs 5 --lr 1.0 --percent 0.05"
 )
 
 for i in "${!task3_tests[@]}"; do

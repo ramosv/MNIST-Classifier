@@ -23,7 +23,7 @@ Test set: Average loss: 0.6954, Accuracy: 8302/10000 (83%)
 === Task 3: Training with Reduced Data Sizes ===
 
 Task 3 Test 1:
-Configuration: --epochs 5 --lr 1.0 --batch-size 64 --data-fraction 0.5
+Configuration: --epochs 5 --lr 1.0 --batch-size 64 --percent 0.5
 Test set: Average loss: 0.1478, Accuracy: 9550/10000 (96%)
 Test set: Average loss: 0.0603, Accuracy: 9815/10000 (98%)
 Test set: Average loss: 0.0402, Accuracy: 9881/10000 (99%)
@@ -31,7 +31,7 @@ Test set: Average loss: 0.0300, Accuracy: 9918/10000 (99%)
 Test set: Average loss: 0.0297, Accuracy: 9920/10000 (99%)
 
 Task 3 Test 2:
-Configuration: --epochs 5 --lr 1.0 --batch-size 64 --data-fraction 0.05
+Configuration: --epochs 5 --lr 1.0 --batch-size 64 --percent 0.05
 Test set: Average loss: 0.4487, Accuracy: 8335/10000 (83%)
 Test set: Average loss: 0.1544, Accuracy: 9539/10000 (95%)
 Test set: Average loss: 0.1363, Accuracy: 9602/10000 (96%)

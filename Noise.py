@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import os
 
 # Import the NeuralNet class from main.py
-from main import NeuralNet
+from .CNN import NeuralNet
 
 def add_gaussian_noise(image, mean=0.0, std=0.5):
     noisy_img = image + torch.randn(image.size()) * std + mean
@@ -30,24 +30,26 @@ def add_salt_pepper_noise(image, prob=0.2):
 
     return noisy_img
 
-def main():
-    parser = argparse.ArgumentParser(description='Add Noise to Test Images and Evaluate CNN')
-    parser.add_argument('--noise-type', type=str, required=True,
-                        help='Type of noise to add: "gaussian" or "s&p"')
-    parser.add_argument('--mean', type=float, default=0.0, help='Mean for Gaussian noise')
-    parser.add_argument('--std', type=float, default=0.5, help='Standard deviation for Gaussian noise')
-    parser.add_argument('--prob', type=float, default=0.2, help='Probability for Salt & Pepper noise')
-    parser.add_argument('--save-images', action='store_true', default=False,
-                        help='Save the noisy images to disk')
+def Add_Noise():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--noise-type', type=str, required=True)
+    parser.add_argument('--mean', type=float, default=0.0)
+    parser.add_argument('--std', type=float, default=0.5)
+    parser.add_argument('--prob', type=float, default=0.2)
     args = parser.parse_args()
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+    #comment out this line if using cuda or cpu
+    #device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    
+    device = torch.device('mps')
+   
     # Load the trained model
     model = NeuralNet().to(device)
     if not os.path.exists("mnist_cnn.pt"):
         print("Trained model 'mnist_cnn.pt' not found. Please train the model first.")
         return
+    
     model.load_state_dict(torch.load("mnist_cnn.pt", map_location=device))
     model.eval()
 
@@ -101,14 +103,11 @@ def main():
         results += result + "\n"
 
         # Save the noisy images
-        if args.save_images:
-            import matplotlib.pyplot as plt
-            plt.imshow(noisy_image.squeeze(), cmap='gray')
-            plt.title(f'Original: {label}, Predicted: {pred}')
-            plt.savefig(f'noisy_image_{idx+1}.png')
-            plt.close()
+        
+
+        plt.imshow(noisy_image.squeeze(), cmap='gray')
+        plt.title(f'Original: {label}, Predicted: {pred}')
+        plt.savefig(f'noisy_image_{idx+1}.png')
+        plt.close()
 
     print(results)
-
-if __name__ == "__main__":
-    main()
