@@ -30,7 +30,7 @@ def add_salt_pepper_noise(image, prob=0.2):
 def Add_Noise(noise_type, mean=0.0, std=0.5, prob=0.2):
     output_lines = []
 
-    device = torch.device("mps")
+    device = torch.device("cpu")
     #device = torch.device("cuda")
     #device = torch.device("cpu")
 
@@ -54,7 +54,7 @@ def Add_Noise(noise_type, mean=0.0, std=0.5, prob=0.2):
     correct_labels = []
     with torch.no_grad():
         for data, target in test_dataset:
-            data, target = data.to(device), target.to(device)
+            data, target = data.to(device), torch.tensor(target).to(device)
             output = model(data.unsqueeze(0))
             pred = output.argmax(dim=1, keepdim=True)
             if pred.item() == target.item():

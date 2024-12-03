@@ -1,74 +1,52 @@
 === CNN MNIST Classification Results ===
 
-Test 1:
-Configuration: --epochs 1 --lr 0.01 --batch-size 64
-Test set: Average loss: 0.3529, Accuracy: 8897/10000 (89%)
-
-Test 2:
-Configuration: --epochs 1 --lr 0.001 --batch-size 128
-Test set: Average loss: 2.2738, Accuracy: 2333/10000 (23%)
-
-Test 3:
-Configuration: --epochs 1 --lr 0.005 --batch-size 256
-Test set: Average loss: 2.2060, Accuracy: 5095/10000 (51%)
-
-Test 4:
-Configuration: --epochs 1 --lr 0.0005 --batch-size 32
-Test set: Average loss: 2.2520, Accuracy: 3747/10000 (37%)
-
-Test 5:
-Configuration: --epochs 1 --lr 0.002 --batch-size 16
-Test set: Average loss: 0.6954, Accuracy: 8302/10000 (83%)
-
-=== Task 3: Training with Reduced Data Sizes ===
-
-Task 3 Test 1:
-Configuration: --epochs 5 --lr 1.0 --batch-size 64 --percent 0.5
-Test set: Average loss: 0.1478, Accuracy: 9550/10000 (96%)
-Test set: Average loss: 0.0603, Accuracy: 9815/10000 (98%)
-Test set: Average loss: 0.0402, Accuracy: 9881/10000 (99%)
-Test set: Average loss: 0.0300, Accuracy: 9918/10000 (99%)
-Test set: Average loss: 0.0297, Accuracy: 9920/10000 (99%)
-
-Task 3 Test 2:
-Configuration: --epochs 5 --lr 1.0 --batch-size 64 --percent 0.05
-Test set: Average loss: 0.4487, Accuracy: 8335/10000 (83%)
-Test set: Average loss: 0.1544, Accuracy: 9539/10000 (95%)
-Test set: Average loss: 0.1363, Accuracy: 9602/10000 (96%)
-Test set: Average loss: 0.1006, Accuracy: 9705/10000 (97%)
-Test set: Average loss: 0.1031, Accuracy: 9711/10000 (97%)
-
 === Task 4: Adding Noise to Test Images ===
 
 Task 4 Noise Test 1:
-Noise Type: gaussian 0 0.1
+Noise Type: {'noise_type': 'gaussian', 'mean': 0, 'std': 0.25}
+Image 1 - Original Label: 7, Predicted After Noise: 7 | Fooled: False
+Image 2 - Original Label: 2, Predicted After Noise: 2 | Fooled: False
 
 
 Task 4 Noise Test 2:
-Noise Type: gaussian 0 0.3
+Noise Type: {'noise_type': 'gaussian', 'mean': 0, 'std': 0.5}
+Image 1 - Original Label: 7, Predicted After Noise: 7 | Fooled: False
+Image 2 - Original Label: 2, Predicted After Noise: 2 | Fooled: False
 
 
 Task 4 Noise Test 3:
-Noise Type: gaussian 0 0.5
+Noise Type: {'noise_type': 'gaussian', 'mean': 0, 'std': 0.75}
+Image 1 - Original Label: 7, Predicted After Noise: 7 | Fooled: False
+Image 2 - Original Label: 2, Predicted After Noise: 2 | Fooled: False
 
 
 Task 4 Noise Test 4:
-Noise Type: gaussian 0 0.7
+Noise Type: {'noise_type': 'gaussian', 'mean': 0, 'std': 1.0}
+Image 1 - Original Label: 7, Predicted After Noise: 7 | Fooled: False
+Image 2 - Original Label: 2, Predicted After Noise: 2 | Fooled: False
 
 
 Task 4 Noise Test 5:
-Noise Type: s&p 0.05
+Noise Type: {'noise_type': 's&p', 'prob': 0.25}
+Image 1 - Original Label: 7, Predicted After Noise: 7 | Fooled: False
+Image 2 - Original Label: 2, Predicted After Noise: 2 | Fooled: False
 
 
 Task 4 Noise Test 6:
-Noise Type: s&p 0.1
+Noise Type: {'noise_type': 's&p', 'prob': 0.5}
+Image 1 - Original Label: 7, Predicted After Noise: 7 | Fooled: False
+Image 2 - Original Label: 2, Predicted After Noise: 2 | Fooled: False
 
 
 Task 4 Noise Test 7:
-Noise Type: s&p 0.2
+Noise Type: {'noise_type': 's&p', 'prob': 0.75}
+Image 1 - Original Label: 7, Predicted After Noise: 7 | Fooled: False
+Image 2 - Original Label: 2, Predicted After Noise: 2 | Fooled: False
 
 
 Task 4 Noise Test 8:
-Noise Type: s&p 0.3
+Noise Type: {'noise_type': 's&p', 'prob': 1.0}
+Image 1 - Original Label: 7, Predicted After Noise: 7 | Fooled: False
+Image 2 - Original Label: 2, Predicted After Noise: 2 | Fooled: False
 
 

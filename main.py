@@ -5,14 +5,14 @@ def main():
     # Initialize or clear the results.txt file
     with open('results.txt', 'w') as f:
         f.write("=== CNN MNIST Classification Results ===\n\n")
-
+    '''
     # Array of test configurations for Task 1 and 2
     tests = [
-        {'epochs': 3, 'lr': 0.01},
-        {'epochs': 3, 'lr': 0.001},
-        {'epochs': 3, 'lr': 0.005},
-        {'epochs': 3, 'lr': 0.0005},
-        {'epochs': 3, 'lr': 0.002}
+        {'epochs': 2, 'lr': 0.01},
+        {'epochs': 2, 'lr': 0.001},
+        {'epochs': 2, 'lr': 0.005},
+        {'epochs': 2, 'lr': 0.0005},
+        {'epochs': 2, 'lr': 0.002}
     ]
 
     # Looping through each test configuration
@@ -64,20 +64,20 @@ def main():
 
         print(f"Task 3 Test {test_num} completed. Result appended to results.txt.")
         print("--------------------------------------------")
-
+    '''
     # Task 4: Adding Noise to Test Images
     with open('results.txt', 'a') as f:
         f.write("=== Task 4: Adding Noise to Test Images ===\n\n")
 
     noise_tests = [
-        {'noise_type': 'gaussian', 'mean': 0, 'std': 0.1},
-        {'noise_type': 'gaussian', 'mean': 0, 'std': 0.3},
-        {'noise_type': 'gaussian', 'mean': 0, 'std': 0.5},
-        {'noise_type': 'gaussian', 'mean': 0, 'std': 0.7},
-        {'noise_type': 's&p', 'prob': 0.05},
-        {'noise_type': 's&p', 'prob': 0.1},
-        {'noise_type': 's&p', 'prob': 0.2},
-        {'noise_type': 's&p', 'prob': 0.3}
+        {'noise_type': 'gaussian', 'mean': 0, 'std': 0.25},
+        {'noise_type': 'gaussian', 'mean': 0, 'std': 0.50},
+        {'noise_type': 'gaussian', 'mean': 0, 'std': 0.75},
+        {'noise_type': 'gaussian', 'mean': 0, 'std': 1.0},
+        {'noise_type': 's&p', 'prob': 0.25},
+        {'noise_type': 's&p', 'prob': 0.50},
+        {'noise_type': 's&p', 'prob': 0.75},
+        {'noise_type': 's&p', 'prob': 1.0}
     ]
 
     for i, noise_config in enumerate(noise_tests):
