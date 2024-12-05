@@ -17,11 +17,11 @@ def add_salt_pepper_noise(image, prob=0.2):
     num_salt = int(prob * num_pixels / 2)
     num_pepper = int(prob * num_pixels / 2)
 
-    # Salt noise
+    # salt
     coords = np.random.choice(num_pixels, num_salt, replace=False)
     noisy_img.view(-1)[coords] = 1.0
 
-    # Pepper noise
+    # pepper
     coords = np.random.choice(num_pixels, num_pepper, replace=False)
     noisy_img.view(-1)[coords] = 0.0
 
@@ -30,13 +30,13 @@ def add_salt_pepper_noise(image, prob=0.2):
 def Add_Noise(noise_type, mean=0.0, std=0.5, prob=0.2):
     output_lines = []
 
-    device = torch.device("cpu")
+    #device = torch.device("mps")
     #device = torch.device("cuda")
-    #device = torch.device("cpu")
+    device = torch.device("cpu")
 
     model = NeuralNet().to(device)
     if not os.path.exists("mnist_cnn.pt"):
-        message = "Trained model 'mnist_cnn.pt' not found. Please train the model first."
+        message = "Trained model 'mnist_cnn.pt' not found. Run CNN.py first"
         print(message)
         output_lines.append(message)
         return output_lines
@@ -44,18 +44,22 @@ def Add_Noise(noise_type, mean=0.0, std=0.5, prob=0.2):
     model.load_state_dict(torch.load("mnist_cnn.pt", map_location=device))
     model.eval()
 
-    transform = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize((0.1307,), (0.3081,))
-    ])
+    transform = transforms.Compose([transforms.ToTensor(),])
+
     test_dataset = datasets.MNIST('../data', train=False, download=True, transform=transform)
+
+    normalize = transforms.Normalize((0.1307,), (0.3081,))
+    
 
     correct_images = []
     correct_labels = []
     with torch.no_grad():
         for data, target in test_dataset:
             data, target = data.to(device), torch.tensor(target).to(device)
-            output = model(data.unsqueeze(0))
+
+            normalized_data = normalize(data)
+
+            output = model(normalized_data.unsqueeze(0))
             pred = output.argmax(dim=1, keepdim=True)
             if pred.item() == target.item():
                 correct_images.append(data.cpu())
@@ -74,19 +78,17 @@ def Add_Noise(noise_type, mean=0.0, std=0.5, prob=0.2):
     for idx in range(2):
         image = correct_images[idx]
         label = correct_labels[idx]
+
         if noise_type.lower() == "gaussian":
             noisy_image = add_gaussian_noise(image, mean=mean, std=std)
             noise_param = f"Gaussian Noise (mean={mean}, std={std})"
         elif noise_type.lower() in ["s&p", "salt_pepper", "salt and pepper"]:
             noisy_image = add_salt_pepper_noise(image, prob=prob)
             noise_param = f"Salt and Pepper Noise (prob={prob})"
-        else:
-            message = "Unsupported noise type. Use 'gaussian' or 's&p'."
-            print(message)
-            output_lines.append(message)
-            return output_lines
 
-        output = model(noisy_image.unsqueeze(0).to(device))
+        norm_noisy = normalize(noisy_image)
+
+        output = model(norm_noisy.unsqueeze(0).to(device))
         pred = output.argmax(dim=1, keepdim=True).item()
         fooled = pred != label
         result = (f"Image {idx+1} - Original Label: {label}, "
@@ -95,7 +97,7 @@ def Add_Noise(noise_type, mean=0.0, std=0.5, prob=0.2):
 
         plt.imshow(noisy_image.squeeze(), cmap='gray')
         plt.title(f'Original: {label}, Predicted: {pred}')
-        plt.savefig(f'noisy_image_{idx+1}.png')
+        plt.savefig(f'noised_up_image_{idx+1}.png')
         plt.close()
 
     print(results)

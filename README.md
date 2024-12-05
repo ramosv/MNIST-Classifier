@@ -3,6 +3,7 @@
 
 1. Write code to build a CNN with 4 convolutional layers, 4 pooling layers and 1 fully
 connected layer.
+Done 
 Do a little experimentation and explain your choice of hyperparameters. What accuracy
 to you get on the test set?
 2. Build a feedforward neural network model (feel free to choose the number of layers,
