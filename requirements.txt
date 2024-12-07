@@ -1,2 +1,3 @@
 torch
-torchvision==0.20.0
+torchvision
+numpy<2.0,>=1.16.0
