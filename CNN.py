@@ -7,6 +7,7 @@ from torch.optim.lr_scheduler import StepLR
 from torch.utils.data import Subset
 import numpy as np
 
+# CNN
 class NeuralNet(nn.Module):
     def __init__(self):
         super(NeuralNet, self).__init__()
@@ -42,6 +43,24 @@ class NeuralNet(nn.Module):
         x = self.fc1(x)
 
         return F.log_softmax(x, dim=1)
+    
+# FNN
+class FNN(nn.Module):
+    def __init__(self):
+        super(FNN, self).__init__()
+        self.fc1 = nn.Linear(28 * 28, 512)  # Input size: 28x28 pixels
+        self.fc2 = nn.Linear(512, 256)
+        self.fc3 = nn.Linear(256, 128)
+        self.fc4 = nn.Linear(128, 10)  # Output size: 10 classes
+
+    def forward(self, x):
+        x = x.view(-1, 28 * 28)  # Flatten the image
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = F.relu(self.fc3(x))
+        x = self.fc4(x)
+
+        return F.log_softmax(x, dim=1)
 
 def train(model, device, train_loader, optimizer, epoch, output_lines):
     model.train()
@@ -53,10 +72,12 @@ def train(model, device, train_loader, optimizer, epoch, output_lines):
         loss.backward()
         optimizer.step()
         if batch_idx % 10 == 0:
-            message =(f'Train Epoch: {epoch} [{batch_idx * len(data)}/{len(train_loader.dataset)} '
-                  f'({100. * batch_idx / len(train_loader):.0f}%)]\tLoss: {loss.item():.6f}')
+            message = (f'Train Epoch: {epoch} [{batch_idx * len(data)}/{len(train_loader.dataset)} '
+                       f'({100. * batch_idx / len(train_loader):.0f}%)]\tLoss: {loss.item():.6f}')
             print(message)
             output_lines.append(message)
+
+
 def test(model, device, test_loader, output_lines):
     model.eval()
     test_loss = 0
@@ -65,83 +86,66 @@ def test(model, device, test_loader, output_lines):
         for data, target in test_loader:
             data, target = data.to(device), target.to(device)
             output = model(data)
-            test_loss += F.nll_loss(output, target, reduction='sum').item() 
+            test_loss += F.nll_loss(output, target, reduction='sum').item()
             pred = output.argmax(dim=1, keepdim=True)
             correct += pred.eq(target.view_as(pred)).sum().item()
 
     test_loss /= len(test_loader.dataset)
+    accuracy = 100. * correct / len(test_loader.dataset)
 
     message = (f'\nTest set: Average loss: {test_loss:.4f}, '
-          f'Accuracy: {correct}/{len(test_loader.dataset)} '
-          f'({100. * correct / len(test_loader.dataset):.0f}%)\n')
-    
+               f'Accuracy: {correct}/{len(test_loader.dataset)} '
+               f'({accuracy:.0f}%)\n')
     print(message)
     output_lines.append(message)
 
-def Run_CNN(epochs=14, lr=1.0, percent=1.0):    
+
+def Run_Model(model_type="CNN", epochs=5, lr=1.0, percent=1.0):
     output_lines = []
-    # setting a manual seed for reproducibility
     torch.manual_seed(1)
 
-    #Testing on mac: well use mps otherwise uncomment cuda or cpu
-    device = torch.device('mps')
-    #device = torch.device('cuda')
-    #device = torch.device('cpu')
+    device = torch.device('mps' if torch.mps.is_available() else 'cpu')
 
-    #Take the tain and test argscumetns
     train_kwargs = {'batch_size': 64}
     test_kwargs = {'batch_size': 1000}
 
-    # Transform from torch vision library uses Compose to chain multiple transforms together
-    # ToTensor() converts the image to a tensor: a tensor is just a multi-dimensional array
-    # Normalize() normalizes the image by the mean and standard deviation
     transform = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize((0.1307,), (0.3081,))
     ])
 
-    # Load the MNIST dataset which is already part of torch vision
-    # dataset1 is the training dataset and dataset2 is the test dataset
-    # we only need to download dataset1 as dataset2 is already available
-    dataset1 = datasets.MNIST('../data', train=True, download=True,
-                              transform=transform)
-    dataset2 = datasets.MNIST('../data', train=False,
-                              transform=transform)
-    
-    # Adjust the training dataset based on percent argument
-    # We can use the Subset class to create a subset of the dataset
-    # We can then use the DataLoader class to load the subset
+    dataset1 = datasets.MNIST('../data', train=True, download=True, transform=transform)
+    dataset2 = datasets.MNIST('../data', train=False, transform=transform)
+
     if percent < 1.0:
-        # setting the number of training samples based on the percent argument
         num_train = int(len(dataset1) * percent)
         indices = np.random.choice(len(dataset1), num_train, replace=False)
         subset = Subset(dataset1, indices)
         train_loader = torch.utils.data.DataLoader(subset, **train_kwargs)
-        message = (f'Using {num_train} training samples out of {len(dataset1)}')
-        print(message)
-        output_lines.append(message)
+        output_lines.append(f'Using {num_train} training samples out of {len(dataset1)}')
     else:
         train_loader = torch.utils.data.DataLoader(dataset1, **train_kwargs)
-        message= (f'Using all {len(dataset1)} training samples')
-        output_lines.append(message)
+        output_lines.append(f'Using all {len(dataset1)} training samples')
 
-    # regardless of the size of the training dataset, we will use all the test samples
     test_loader = torch.utils.data.DataLoader(dataset2, **test_kwargs)
-    
-    # Create the model and optimizer
-    model = NeuralNet().to(device)
-    optimizer = optim.Adadelta(model.parameters(), lr=lr)
 
+    # Initialize model
+    if model_type == "CNN":
+        model = NeuralNet().to(device)
+    elif model_type == "FNN":
+        model = FNN().to(device)
+    else:
+        raise ValueError("Invalid model_type. Choose 'CNN' or 'FNN'.")
+
+    optimizer = optim.Adadelta(model.parameters(), lr=lr)
     scheduler = StepLR(optimizer, step_size=1, gamma=0.7)
+
     for epoch in range(1, epochs + 1):
-        # train and test functions do not return anything
-        # we capture the result in our shell script by combinng grep and the print
-        train(model, device, train_loader, optimizer, epoch,output_lines)
+        train(model, device, train_loader, optimizer, epoch, output_lines)
         test(model, device, test_loader, output_lines)
         scheduler.step()
 
-    torch.save(model.state_dict(), "mnist_cnn.pt")
-    message = ("Model saved as mnist_cnn.pt")
-    output_lines.append(message)
+    torch.save(model.state_dict(), f"mnist_{model_type.lower()}.pt")
+    output_lines.append(f"Model saved as mnist_{model_type.lower()}.pt")
 
     return output_lines
