@@ -95,86 +95,74 @@ Test set: Average loss: 0.6684, Accuracy: 8446/10000 (84%)
 Task 3 Test 1:
 Configuration: {'model_type': 'CNN', 'epochs': 5, 'lr': 1.0, 'percent': 0.5}
 
-Test set: Average loss: 0.0558, Accuracy: 9837/10000 (98%)
+Test set: Average loss: 0.0549, Accuracy: 9831/10000 (98%)
 
 
-Test set: Average loss: 0.0354, Accuracy: 9896/10000 (99%)
+Test set: Average loss: 0.0427, Accuracy: 9875/10000 (99%)
 
 
-Test set: Average loss: 0.0330, Accuracy: 9904/10000 (99%)
+Test set: Average loss: 0.0336, Accuracy: 9908/10000 (99%)
 
 
-Test set: Average loss: 0.0347, Accuracy: 9923/10000 (99%)
+Test set: Average loss: 0.0295, Accuracy: 9923/10000 (99%)
 
 
-Test set: Average loss: 0.0313, Accuracy: 9928/10000 (99%)
+Test set: Average loss: 0.0297, Accuracy: 9924/10000 (99%)
 
 
 Task 3 Test 2:
 Configuration: {'model_type': 'CNN', 'epochs': 5, 'lr': 1.0, 'percent': 0.05}
 
-Test set: Average loss: 0.3135, Accuracy: 9080/10000 (91%)
+Test set: Average loss: 0.3362, Accuracy: 8966/10000 (90%)
 
 
-Test set: Average loss: 0.1560, Accuracy: 9518/10000 (95%)
+Test set: Average loss: 0.1588, Accuracy: 9521/10000 (95%)
 
 
-Test set: Average loss: 0.1403, Accuracy: 9558/10000 (96%)
+Test set: Average loss: 0.1198, Accuracy: 9629/10000 (96%)
 
 
-Test set: Average loss: 0.1055, Accuracy: 9643/10000 (96%)
+Test set: Average loss: 0.1059, Accuracy: 9696/10000 (97%)
 
 
-Test set: Average loss: 0.0909, Accuracy: 9706/10000 (97%)
+Test set: Average loss: 0.0914, Accuracy: 9717/10000 (97%)
 
 
 === Task 4: Adding Noise to Test Images ===
 
 Task 4 Noise Test 1:
 Noise Type: {'noise_type': 'gaussian', 'mean': 0, 'std': 0.25}
-Image 1 - Original Label: 7, Predicted After Noise: 7 | Fooled: False
-Image 2 - Original Label: 2, Predicted After Noise: 2 | Fooled: False
-
+No images fooled the model with the current noise configuration.
 
 Task 4 Noise Test 2:
 Noise Type: {'noise_type': 'gaussian', 'mean': 0, 'std': 0.5}
-Image 1 - Original Label: 7, Predicted After Noise: 7 | Fooled: False
-Image 2 - Original Label: 2, Predicted After Noise: 2 | Fooled: False
-
+No images fooled the model with the current noise configuration.
 
 Task 4 Noise Test 3:
 Noise Type: {'noise_type': 'gaussian', 'mean': 0, 'std': 0.75}
-Image 1 - Original Label: 7, Predicted After Noise: 3 | Fooled: True
-Image 2 - Original Label: 2, Predicted After Noise: 2 | Fooled: False
-
+Image 1 - Original Label: 7, Predicted After Noise: 3 | Fooled: True | Noise: Gaussian Noise (mean=0, std=0.75)
+Image 2 - Original Label: 2, Predicted After Noise: 3 | Fooled: True | Noise: Gaussian Noise (mean=0, std=0.75)
 
 Task 4 Noise Test 4:
 Noise Type: {'noise_type': 'gaussian', 'mean': 0, 'std': 1.0}
-Image 1 - Original Label: 7, Predicted After Noise: 3 | Fooled: True
-Image 2 - Original Label: 2, Predicted After Noise: 8 | Fooled: True
-
+Image 1 - Original Label: 7, Predicted After Noise: 3 | Fooled: True | Noise: Gaussian Noise (mean=0, std=1.0)
+Image 2 - Original Label: 2, Predicted After Noise: 8 | Fooled: True | Noise: Gaussian Noise (mean=0, std=1.0)
 
 Task 4 Noise Test 5:
 Noise Type: {'noise_type': 's&p', 'prob': 0.25}
-Image 1 - Original Label: 7, Predicted After Noise: 7 | Fooled: False
-Image 2 - Original Label: 2, Predicted After Noise: 2 | Fooled: False
-
+No images fooled the model with the current noise configuration.
 
 Task 4 Noise Test 6:
 Noise Type: {'noise_type': 's&p', 'prob': 0.5}
-Image 1 - Original Label: 7, Predicted After Noise: 2 | Fooled: True
-Image 2 - Original Label: 2, Predicted After Noise: 2 | Fooled: False
-
+No images fooled the model with the current noise configuration.
 
 Task 4 Noise Test 7:
 Noise Type: {'noise_type': 's&p', 'prob': 0.75}
-Image 1 - Original Label: 7, Predicted After Noise: 3 | Fooled: True
-Image 2 - Original Label: 2, Predicted After Noise: 2 | Fooled: False
-
+Image 1 - Original Label: 7, Predicted After Noise: 3 | Fooled: True | Noise: Salt and Pepper Noise (prob=0.75)
+Image 2 - Original Label: 2, Predicted After Noise: 3 | Fooled: True | Noise: Salt and Pepper Noise (prob=0.75)
 
 Task 4 Noise Test 8:
 Noise Type: {'noise_type': 's&p', 'prob': 1.0}
-Image 1 - Original Label: 7, Predicted After Noise: 3 | Fooled: True
-Image 2 - Original Label: 2, Predicted After Noise: 2 | Fooled: False
-
+Image 1 - Original Label: 7, Predicted After Noise: 3 | Fooled: True | Noise: Salt and Pepper Noise (prob=1.0)
+Image 2 - Original Label: 2, Predicted After Noise: 3 | Fooled: True | Noise: Salt and Pepper Noise (prob=1.0)
 
