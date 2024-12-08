@@ -1,0 +1,11 @@
+***Task 1***
+With a learning rate of 0.01 the CNN achieved a high accuracy of 95% after 5 epochs. In contrast, lower learning rates, such as 0.001, resulted in slower convergence, with accuracy only reaching 73% in the same number of epochs. This showed us the importance of selecting an optimal learning rate to balance learning speed and stability. Improvments can be adding more epochs with smaller learning rates.
+
+***Task 2***
+The FNN performed worse than the CNN on the MNIST dataset. With a learning rate of 0.005 the FNN achieved a maximum accuracy of 89% after 5 epochs which is significantly lower than the CNN's 95%. It also struggled with very low learning rates, such as 0.0005, where accuracy stayed at 45%. This shows CNNs for image data, as their convolutional layers can effectively capture spatial hierarchies and relationships whereas the FNN treats pixel values as independent features making the CNN's architecture better suited for image classification tasks.
+
+***Task 3***
+Training the CNN with reduced data sizes resulted in its ability to generalize well with limited training examples. Using only 50% of the training data the model had an accuracy of 99% after 5 epochs. When trained on just 5% of the data the CNN initially got 91% accuracy going to 97% by the end of 5 epochs. These results show that while the CNN can perform well with limited data additional training epochs are necessary to compensate for the smaller dataset.
+
+***Task 4***
+For Gaussian noise, the model remained accurate at lower noise levels std = 0.25 and 0.5 and correctly classifying the test images. However, at higher noise levels std = 0.75 and 1.0 the CNN's performance was lower, with misclassifications occurring for both test images. Similarly, under salt-and-pepper noise, the model performed well at lower probabilities prob = 0.25 but began to fail as the noise density increased prob = 0.5 and above. At prob = 0.75, Image 1 (label 7) was misclassified as 3. These results show that while the CNN is robust to mild noise its accuracy drops under more intense noise.

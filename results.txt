@@ -1,4 +1,132 @@
-=== CNN MNIST Classification Results ===
+=== MNIST Classification Results ===
+
+Test 1:
+Configuration: {'model_type': 'CNN', 'epochs': 5, 'lr': 0.01}
+
+Test set: Average loss: 0.3529, Accuracy: 8897/10000 (89%)
+
+
+Test set: Average loss: 0.2254, Accuracy: 9275/10000 (93%)
+
+
+Test set: Average loss: 0.1816, Accuracy: 9416/10000 (94%)
+
+
+Test set: Average loss: 0.1599, Accuracy: 9495/10000 (95%)
+
+
+Test set: Average loss: 0.1476, Accuracy: 9540/10000 (95%)
+
+
+Test 2:
+Configuration: {'model_type': 'CNN', 'epochs': 5, 'lr': 0.001}
+
+Test set: Average loss: 2.2449, Accuracy: 4051/10000 (41%)
+
+
+Test set: Average loss: 2.1751, Accuracy: 6097/10000 (61%)
+
+
+Test set: Average loss: 2.0888, Accuracy: 6830/10000 (68%)
+
+
+Test set: Average loss: 1.9979, Accuracy: 7100/10000 (71%)
+
+
+Test set: Average loss: 1.9150, Accuracy: 7268/10000 (73%)
+
+
+Test 3:
+Configuration: {'model_type': 'FNN', 'epochs': 5, 'lr': 0.005}
+
+Test set: Average loss: 1.1399, Accuracy: 7581/10000 (76%)
+
+
+Test set: Average loss: 0.6188, Accuracy: 8453/10000 (85%)
+
+
+Test set: Average loss: 0.4993, Accuracy: 8716/10000 (87%)
+
+
+Test set: Average loss: 0.4494, Accuracy: 8828/10000 (88%)
+
+
+Test set: Average loss: 0.4234, Accuracy: 8887/10000 (89%)
+
+
+Test 4:
+Configuration: {'model_type': 'FNN', 'epochs': 5, 'lr': 0.0005}
+
+Test set: Average loss: 2.2698, Accuracy: 2358/10000 (24%)
+
+
+Test set: Average loss: 2.2454, Accuracy: 3388/10000 (34%)
+
+
+Test set: Average loss: 2.2249, Accuracy: 3969/10000 (40%)
+
+
+Test set: Average loss: 2.2085, Accuracy: 4299/10000 (43%)
+
+
+Test set: Average loss: 2.1957, Accuracy: 4497/10000 (45%)
+
+
+Test 5:
+Configuration: {'model_type': 'CNN', 'epochs': 5, 'lr': 0.002}
+
+Test set: Average loss: 2.1265, Accuracy: 6605/10000 (66%)
+
+
+Test set: Average loss: 1.5776, Accuracy: 7616/10000 (76%)
+
+
+Test set: Average loss: 1.0220, Accuracy: 8033/10000 (80%)
+
+
+Test set: Average loss: 0.7777, Accuracy: 8297/10000 (83%)
+
+
+Test set: Average loss: 0.6684, Accuracy: 8446/10000 (84%)
+
+
+=== Task 3: Training with Reduced Data Sizes ===
+
+Task 3 Test 1:
+Configuration: {'model_type': 'CNN', 'epochs': 5, 'lr': 1.0, 'percent': 0.5}
+
+Test set: Average loss: 0.0558, Accuracy: 9837/10000 (98%)
+
+
+Test set: Average loss: 0.0354, Accuracy: 9896/10000 (99%)
+
+
+Test set: Average loss: 0.0330, Accuracy: 9904/10000 (99%)
+
+
+Test set: Average loss: 0.0347, Accuracy: 9923/10000 (99%)
+
+
+Test set: Average loss: 0.0313, Accuracy: 9928/10000 (99%)
+
+
+Task 3 Test 2:
+Configuration: {'model_type': 'CNN', 'epochs': 5, 'lr': 1.0, 'percent': 0.05}
+
+Test set: Average loss: 0.3135, Accuracy: 9080/10000 (91%)
+
+
+Test set: Average loss: 0.1560, Accuracy: 9518/10000 (95%)
+
+
+Test set: Average loss: 0.1403, Accuracy: 9558/10000 (96%)
+
+
+Test set: Average loss: 0.1055, Accuracy: 9643/10000 (96%)
+
+
+Test set: Average loss: 0.0909, Accuracy: 9706/10000 (97%)
+
 
 === Task 4: Adding Noise to Test Images ===
 
@@ -17,13 +145,13 @@ Image 2 - Original Label: 2, Predicted After Noise: 2 | Fooled: False
 Task 4 Noise Test 3:
 Noise Type: {'noise_type': 'gaussian', 'mean': 0, 'std': 0.75}
 Image 1 - Original Label: 7, Predicted After Noise: 3 | Fooled: True
-Image 2 - Original Label: 2, Predicted After Noise: 8 | Fooled: True
+Image 2 - Original Label: 2, Predicted After Noise: 2 | Fooled: False
 
 
 Task 4 Noise Test 4:
 Noise Type: {'noise_type': 'gaussian', 'mean': 0, 'std': 1.0}
-Image 1 - Original Label: 7, Predicted After Noise: 2 | Fooled: True
-Image 2 - Original Label: 2, Predicted After Noise: 2 | Fooled: False
+Image 1 - Original Label: 7, Predicted After Noise: 3 | Fooled: True
+Image 2 - Original Label: 2, Predicted After Noise: 8 | Fooled: True
 
 
 Task 4 Noise Test 5:
@@ -41,12 +169,12 @@ Image 2 - Original Label: 2, Predicted After Noise: 2 | Fooled: False
 Task 4 Noise Test 7:
 Noise Type: {'noise_type': 's&p', 'prob': 0.75}
 Image 1 - Original Label: 7, Predicted After Noise: 3 | Fooled: True
-Image 2 - Original Label: 2, Predicted After Noise: 3 | Fooled: True
+Image 2 - Original Label: 2, Predicted After Noise: 2 | Fooled: False
 
 
 Task 4 Noise Test 8:
 Noise Type: {'noise_type': 's&p', 'prob': 1.0}
 Image 1 - Original Label: 7, Predicted After Noise: 3 | Fooled: True
-Image 2 - Original Label: 2, Predicted After Noise: 3 | Fooled: True
+Image 2 - Original Label: 2, Predicted After Noise: 2 | Fooled: False
 
 
